@@ -1,10 +1,25 @@
 <script>
   import svelteLogo from './assets/svelte.svg'
   import Counter from './lib/Counter.svelte'
+  import IERC20 from '@openzeppelin/contracts/build/contracts/IERC20.json'
 
   import { onMount } from 'svelte'
-  import { defaultEvmStores as evm, selectedAccount, chainId } from 'svelte-web3'
+  import { defaultEvmStores as evm, contracts, selectedAccount, chainId } from 'svelte-web3'
   onMount( evm.setProvider )
+
+  evm.attachContract('link', '0x326C977E6efc84E512bB9C30f76E30c160eD06FB', IERC20.abi)
+
+  selectedAccount.subscribe(async $a => {
+    if (!$a) return
+
+    console.log('connected to account ', $a)
+  })
+
+  contracts.subscribe(async $c => {
+    if (!$c.link) return
+    const total = await $contracts.link.methods.totalSupply().call()
+    console.log('total is', total)
+  })
 
 </script>
 
